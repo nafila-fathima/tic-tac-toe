@@ -1,5 +1,5 @@
-Tic Tac Toe Game
-Overview
+**Tic Tac Toe Game
+Overview**
 The Tic Tac Toe Game is a classic two-player strategy game where players alternate turns placing their marks (X or O) on a 3x3 grid. The objective is to align three marks in a row, column, or diagonal before the opponent.
 
 This project uses HTML, CSS, and JavaScript to deliver a visually engaging and responsive experience that works across modern web browsers.
