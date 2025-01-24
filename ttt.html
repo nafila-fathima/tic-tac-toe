@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stylish Tic Tac Toe</title>
+  <style>
+    /* General Body Styles */
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #4e1e72, #492d8a);
+      color: #ffffff;
+    }
+
+    .game-container {
+      text-align: center;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Board Layout */
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 120px);
+      grid-gap: 15px;
+      justify-content: center;
+      margin: 20px auto;
+    }
+
+    .cell {
+      width: 120px;
+      height: 120px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #333;
+      cursor: pointer;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .cell:hover {
+      transform: scale(1.1);
+      background-color: #f1f1f1;
+    }
+
+    .cell.taken {
+      pointer-events: none;
+    }
+
+    /* Winning Message */
+    .winning-message {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .winning-message.show {
+      display: block;
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #fff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .restart-button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      font-weight: bold;
+      background-color: #ff4757;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .restart-button:hover {
+      background-color: #ff6b81;
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1 class="title">Tic Tac Toe</h1>
+    <div class="board" id="board">
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+      <div class="cell" data-cell></div>
+    </div>
+    <div class="winning-message" id="winningMessage">
+      <p id="winningMessageText"></p>
+      <button class="restart-button" id="restartButton">Restart</button>
+    </div>
+  </div>
+
+  <script>
+    // DOM elements
+    const board = document.getElementById('board');
+    const cells = document.querySelectorAll('[data-cell]');
+    const winningMessageElement = document.getElementById('winningMessage');
+    const winningMessageText = document.getElementById('winningMessageText');
+    const restartButton = document.getElementById('restartButton');
+
+    const X_CLASS = 'X';
+    const O_CLASS = 'O';
+    const WINNING_COMBINATIONS = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+
+    let oTurn;
+
+    // Initialize Game
+    startGame();
+
+    restartButton.addEventListener('click', startGame);
+
+    function startGame() {
+      oTurn = false;
+      cells.forEach(cell => {
+        cell.textContent = '';
+        cell.classList.remove(X_CLASS, O_CLASS, 'taken');
+        cell.addEventListener('click', handleClick, { once: true });
+      });
+      winningMessageElement.classList.remove('show');
+    }
+
+    function handleClick(event) {
+      const cell = event.target;
+      const currentClass = oTurn ? O_CLASS : X_CLASS;
+
+      // Place the mark
+      placeMark(cell, currentClass);
+
+      // Check if the game is won
+      if (checkWin(currentClass)) {
+        endGame(false);
+      } else if (isDraw()) {
+        endGame(true);
+      } else {
+        swapTurns();
+      }
+    }
+
+    function placeMark(cell, currentClass) {
+      cell.textContent = currentClass;
+      cell.classList.add(currentClass, 'taken');
+    }
+
+    function swapTurns() {
+      oTurn = !oTurn;
+    }
+
+    function checkWin(currentClass) {
+      return WINNING_COMBINATIONS.some(combination => {
+        return combination.every(index => {
+          return cells[index].classList.contains(currentClass);
+        });
+      });
+    }
+
+    function isDraw() {
+      return [...cells].every(cell => {
+        return cell.classList.contains(X_CLASS) || cell.classList.contains(O_CLASS);
+      });
+    }
+
+    function endGame(draw) {
+      if (draw) {
+        winningMessageText.textContent = "It's a Draw!";
+      } else {
+        winningMessageText.textContent = `${oTurn ? 'O' : 'X'} Wins!`;
+      }
+      winningMessageElement.classList.add('show');
+    }
+  </script>
+</body>
+</html>
